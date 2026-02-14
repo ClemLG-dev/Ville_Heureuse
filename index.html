@@ -166,15 +166,17 @@
         // CONFIGURATION
         const MOT_DE_PASSE = "paris2024";
         
+        // --- NOUVELLE CONFIGURATION FIREBASE ---
         const firebaseConfig = {
             apiKey: "AIzaSyBvYGafOj11LKlAw6M46HMV3x1cURuQcnw",
-  			authDomain: "ville-heureuse.firebaseapp.com",
-  			databaseURL: "https://ville-heureuse-default-rtdb.firebaseio.com",
-  			projectId: "ville-heureuse",
-  			storageBucket: "ville-heureuse.firebasestorage.app",
-  			messagingSenderId: "264551086726",
-  			appId: "1:264551086726:web:078c3075986d2736c1ef07"
+            authDomain: "ville-heureuse.firebaseapp.com",
+            databaseURL: "https://ville-heureuse-default-rtdb.firebaseio.com",
+            projectId: "ville-heureuse",
+            storageBucket: "ville-heureuse.firebasestorage.app",
+            messagingSenderId: "264551086726",
+            appId: "1:264551086726:web:078c3075986d2736c1ef07"
         };
+        
         const OVERPASS_SERVERS = [ "https://overpass-api.de/api/interpreter", "https://lz4.overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter" ];
         const COLOR_TODO = "#dc3545"; const COLOR_DOING = "#fd7e14"; const COLOR_DONE = "#28a745"; const OPACITY_TODO = 0.4; const OPACITY_DONE = 0.8;
 
@@ -316,9 +318,7 @@
 
                 document.getElementById('loading-msg').innerText = "Téléchargement des rues OSM...";
                 
-                // --- REQUÊTE OPTIMISÉE POUR PARIS ---
-                // 1. Timeout augmenté à 90s
-                // 2. Filtre strict sur les types de routes (exclut trottoirs, pistes cyclables isolées, etc.)
+                // --- REQUÊTE OPTIMISÉE POUR PARIS (Timeout 90s, Filtre types de routes) ---
                 let query = `[out:json][timeout:90];(`;
                 const bounds = boundaryLayer.getBounds();
                 const bbox = `${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()}`;
