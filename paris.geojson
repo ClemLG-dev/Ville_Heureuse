@@ -1,0 +1,285 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "1er Arrondissement",
+        "ref": "75001"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [2.3262, 48.8606], [2.3374, 48.8606], [2.3374, 48.8551], 
+          [2.3262, 48.8551], [2.3262, 48.8606]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "2e Arrondissement",
+        "ref": "75002"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [2.3374, 48.8606], [2.3486, 48.8606], [2.3486, 48.8626], 
+          [2.3374, 48.8626], [2.3374, 48.8606]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "3e Arrondissement",
+        "ref": "75003"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [2.3486, 48.8606], [2.3658, 48.8606], [2.3658, 48.8626], 
+          [2.3486, 48.8626], [2.3486, 48.8606]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "4e Arrondissement",
+        "ref": "75004"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [2.3486, 48.8490], [2.3658, 48.8490], [2.3658, 48.8606], 
+          [2.3486, 48.8606], [2.3486, 48.8490]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "5e Arrondissement",
+        "ref": "75005"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [2.3374, 48.8398], [2.3546, 48.8398], [2.3546, 48.8551], 
+          [2.3374, 48.8551], [2.3374, 48.8398]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "6e Arrondissement",
+        "ref": "75006"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [2.3202, 48.8398], [2.3374, 48.8398], [2.3374, 48.8551], 
+          [2.3202, 48.8551], [2.3202, 48.8398]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "7e Arrondissement",
+        "ref": "75007"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [2.2930, 48.8490], [2.3202, 48.8490], [2.3202, 48.8626], 
+          [2.2930, 48.8626], [2.2930, 48.8490]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "8e Arrondissement",
+        "ref": "75008"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [2.2958, 48.8682], [2.3318, 48.8682], [2.3318, 48.8806], 
+          [2.2958, 48.8806], [2.2958, 48.8682]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "9e Arrondissement",
+        "ref": "75009"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [2.3318, 48.8682], [2.3546, 48.8682], [2.3546, 48.8806], 
+          [2.3318, 48.8806], [2.3318, 48.8682]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "10e Arrondissement",
+        "ref": "75010"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [2.3546, 48.8682], [2.3774, 48.8682], [2.3774, 48.8806], 
+          [2.3546, 48.8806], [2.3546, 48.8682]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "11e Arrondissement",
+        "ref": "75011"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [2.3658, 48.8490], [2.3946, 48.8490], [2.3946, 48.8682], 
+          [2.3658, 48.8682], [2.3658, 48.8490]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "12e Arrondissement",
+        "ref": "75012"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [2.3658, 48.8274], [2.4118, 48.8274], [2.4118, 48.8490], 
+          [2.3658, 48.8490], [2.3658, 48.8274]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "13e Arrondissement",
+        "ref": "75013"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [2.3374, 48.8154], [2.3774, 48.8154], [2.3774, 48.8398], 
+          [2.3374, 48.8398], [2.3374, 48.8154]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "14e Arrondissement",
+        "ref": "75014"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [2.3002, 48.8154], [2.3374, 48.8154], [2.3374, 48.8398], 
+          [2.3002, 48.8398], [2.3002, 48.8154]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "15e Arrondissement",
+        "ref": "75015"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [2.2658, 48.8274], [2.3002, 48.8274], [2.3002, 48.8490], 
+          [2.2658, 48.8490], [2.2658, 48.8274]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "16e Arrondissement",
+        "ref": "75016"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [2.2402, 48.8490], [2.2930, 48.8490], [2.2930, 48.8806], 
+          [2.2402, 48.8806], [2.2402, 48.8490]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "17e Arrondissement",
+        "ref": "75017"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [2.2930, 48.8806], [2.3318, 48.8806], [2.3318, 48.9010], 
+          [2.2930, 48.9010], [2.2930, 48.8806]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "18e Arrondissement",
+        "ref": "75018"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [2.3318, 48.8806], [2.3658, 48.8806], [2.3658, 48.9010], 
+          [2.3318, 48.9010], [2.3318, 48.8806]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "19e Arrondissement",
+        "ref": "75019"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [2.3658, 48.8682], [2.4010, 48.8682], [2.4010, 48.9010], 
+          [2.3658, 48.9010], [2.3658, 48.8682]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "20e Arrondissement",
+        "ref": "75020"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [2.3774, 48.8490], [2.4118, 48.8490], [2.4118, 48.8682], 
+          [2.3774, 48.8682], [2.3774, 48.8490]
+        ]]
+      }
+    }
+  ]
+}
