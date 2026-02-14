@@ -11,37 +11,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
     
     <style>
-        body, html { 
-            margin: 0; padding: 0; 
-            height: 100%; width: 100%; 
-            position: fixed; 
-            overflow: hidden; 
-            overscroll-behavior: none; 
-            font-family: sans-serif; 
-            background-color: #2c3e50; 
-        }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; position: fixed; overflow: hidden; overscroll-behavior: none; font-family: sans-serif; background-color: #2c3e50; }
         
-        #header { 
-            position: absolute; top: 0; left: 0; width: 100%; 
-            height: 70px; 
-            background: #2c3e50; color: white; 
-            display: flex; align-items: center; justify-content: space-between; 
-            padding: 0 20px; z-index: 2000; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
+        #header { position: absolute; top: 0; left: 0; width: 100%; height: 70px; background: #2c3e50; color: white; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 2000; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .stats-container { width: 300px; text-align: right; margin-left: 15px; }
         .progress { height: 10px; background-color: #4a6278; }
         
-        #map { 
-            position: absolute; top: 70px; bottom: 0; left: 0; right: 0;
-            background: #e5e5e5; 
-            z-index: 1;
-        }
+        #map { position: absolute; top: 70px; bottom: 0; left: 0; right: 0; background: #e5e5e5; z-index: 1; }
         
-        #search-container { 
-            position: absolute; top: 85px; left: 50%; transform: translateX(-50%); 
-            width: 300px; z-index: 1500; 
-        }
+        #search-container { position: absolute; top: 85px; left: 50%; transform: translateX(-50%); width: 300px; z-index: 1500; }
         #search-input { width: 100%; padding: 10px; border-radius: 20px; border: 2px solid rgba(0,0,0,0.2); box-shadow: 0 4px 6px rgba(0,0,0,0.1); outline: none; font-size: 16px; background: white; }
         #search-results { background: white; margin-top: 5px; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.2); display: none; max-height: 300px; overflow-y: auto; }
         .search-result-item { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 13px; }
@@ -76,6 +54,14 @@
 
         .user-location-marker { background-color: #4285F4; border: 2px solid white; border-radius: 50%; box-shadow: 0 0 5px rgba(0,0,0,0.3); animation: pulse 2s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(66, 133, 244, 0); } 100% { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0); } }
+
+        #zoom-warning {
+            position: absolute; top: 130px; left: 50%; transform: translateX(-50%);
+            background: rgba(44, 62, 80, 0.9); color: white; padding: 10px 20px;
+            border-radius: 20px; z-index: 1400; font-size: 14px; font-weight: bold;
+            pointer-events: none; display: block; box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            white-space: nowrap; transition: opacity 0.3s;
+        }
 
         #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #2c3e50; z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
 
@@ -118,7 +104,7 @@
         </div>
         <div class="stats-container">
             <div class="d-flex justify-content-between mb-1" style="font-size: 0.9rem;">
-                <span id="stats-text">Connexion...</span>
+                <span id="stats-text">0 / -- rues</span>
                 <span id="stats-percent" class="fw-bold text-success">--%</span>
             </div>
             <div class="progress">
@@ -131,9 +117,14 @@
         <input type="text" id="search-input" placeholder="🔍 Rechercher une rue..." onkeyup="searchStreets()">
         <div id="search-results"></div>
     </div>
+    
+    <div id="zoom-warning">🔍 Zoomez pour charger les rues</div>
 
     <div id="map"></div>
-    <div id="source-display" class="source-info" style="display:none"></div>
+    
+    <div id="network-loading" style="position:absolute; top:80px; right:10px; background:white; padding:5px 10px; border-radius:4px; font-size:12px; font-weight:bold; display:none; z-index:2000; box-shadow:0 0 5px rgba(0,0,0,0.3);">
+        Chargement zone...
+    </div>
 
     <div class="legend-container" id="legend">
         <div class="legend-header" onclick="toggleLegend()">
@@ -166,7 +157,7 @@
         // CONFIGURATION
         const MOT_DE_PASSE = "paris2024";
         
-        // --- NOUVELLE CONFIGURATION FIREBASE ---
+        // --- CONFIGURATION FIREBASE ---
         const firebaseConfig = {
             apiKey: "AIzaSyBvYGafOj11LKlAw6M46HMV3x1cURuQcnw",
             authDomain: "ville-heureuse.firebaseapp.com",
@@ -217,14 +208,17 @@
         const planLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, attribution: 'Plan' });
         const satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, attribution: 'Satellite' });
         
-        // Centrage Paris initial
+        // Initialisation Carte
         const map = L.map('map', { layers: [planLayer], doubleClickZoom: false }).setView([48.8566, 2.3522], 13);
 
         let streetsGroup = L.layerGroup().addTo(map);
         let notesGroup = L.layerGroup().addTo(map);
         let userMarker = null;
 
-        let allLayersList = []; let communesPolygons = null; let totalStreetsCount = 0; let latestFirebaseData = {}; let latestNotesData = {}; let currentFilter = 'all'; 
+        let allLayersList = []; 
+        let loadedStreetIds = new Set(); // Pour éviter les doublons
+        let communesPolygons = null; 
+        let latestFirebaseData = {}; let latestNotesData = {}; let currentFilter = 'all'; 
 
         const GeolocControl = L.Control.extend({
             onAdd: function(map) {
@@ -232,7 +226,7 @@
                 div.innerHTML = `<svg class="geoloc-icon" viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>`;
                 div.onclick = function(e) { 
                     e.stopPropagation(); e.preventDefault(); 
-                    map.locate({ setView: true, maxZoom: 16, timeout: 30000, enableHighAccuracy: false }); 
+                    map.locate({ setView: true, maxZoom: 17, timeout: 30000, enableHighAccuracy: false }); 
                 }; 
                 return div;
             }
@@ -276,8 +270,105 @@
             return String(id).toLowerCase().replace(/[^a-z0-9]/g, "_");
         }
 
+        // --- GESTION DU CHARGEMENT DYNAMIQUE ---
+        let fetchTimeout = null;
+
+        function checkZoomAndLoad() {
+            const zoom = map.getZoom();
+            const warningBox = document.getElementById('zoom-warning');
+            
+            if (zoom >= 15) {
+                warningBox.style.opacity = '0';
+                // Petit délai pour ne pas charger si on survole juste la zone
+                if (fetchTimeout) clearTimeout(fetchTimeout);
+                fetchTimeout = setTimeout(loadStreetsInView, 500);
+            } else {
+                warningBox.style.opacity = '1';
+                warningBox.innerText = "🔍 Zoomez pour charger les rues";
+            }
+        }
+
+        map.on('moveend', checkZoomAndLoad);
+
+        async function loadStreetsInView() {
+            const bounds = map.getBounds();
+            // On ne recharge pas si on est trop dézoomé (protection)
+            if (map.getZoom() < 15) return;
+
+            document.getElementById('network-loading').style.display = 'block';
+
+            // Requête ciblée sur la vue actuelle
+            const bbox = `${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()}`;
+            const query = `[out:json][timeout:25];(way["highway"~"^(residential|primary|secondary|tertiary|unclassified|living_street)$"]["name"](${bbox}););out geom;`;
+            
+            const overpassUrl = OVERPASS_SERVERS[Math.floor(Math.random() * OVERPASS_SERVERS.length)] + "?data=" + encodeURIComponent(query);
+
+            try {
+                const response = await fetch(overpassUrl);
+                if (!response.ok) throw new Error("Erreur réseau");
+                const osmData = await response.json();
+                const streetFeatures = osmtogeojson(osmData);
+
+                L.geoJSON(streetFeatures, {
+                    style: { color: COLOR_TODO, weight: 4, opacity: OPACITY_TODO },
+                    onEachFeature: function(feature, layer) {
+                        const streetName = feature.properties.name;
+                        if (streetName) {
+                            const safeId = sanitizeId(streetName);
+                            // Eviter les doublons
+                            if (!loadedStreetIds.has(safeId)) {
+                                loadedStreetIds.add(safeId);
+                                
+                                layer.streetId = safeId;
+                                layer.streetNameDisplay = streetName;
+                                layer.streetNameNormal = streetName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                                layer.bindTooltip(`<div class="street-tooltip">${streetName}</div>`, { permanent: false, sticky: true, direction: 'center' });
+                                layer.on('click', () => {
+                                    const currentStatus = layer.status || 'todo';
+                                    let nextStatus = 'doing';
+                                    if (currentStatus === 'doing') nextStatus = 'done';
+                                    else if (currentStatus === 'done') nextStatus = 'todo';
+                                    set(ref(db, 'streets/' + safeId), { status: nextStatus, timestamp: Date.now() });
+                                });
+                                streetsGroup.addLayer(layer);
+                                allLayersList.push(layer);
+                                
+                                // Mise à jour visuelle immédiate
+                                updateSingleLayer(layer);
+                            }
+                        }
+                    }
+                });
+                
+                // Mettre à jour les stats
+                updateStats();
+
+            } catch (err) {
+                console.warn("Erreur chargement zone:", err);
+            } finally {
+                document.getElementById('network-loading').style.display = 'none';
+            }
+        }
+
+        function updateSingleLayer(layer) {
+            const status = (latestFirebaseData[layer.streetId] && latestFirebaseData[layer.streetId].status) ? latestFirebaseData[layer.streetId].status : 'todo';
+            layer.status = status;
+            
+            if (status === 'done') { layer.setStyle({ color: COLOR_DONE, opacity: OPACITY_DONE }); } 
+            else if (status === 'doing') { layer.setStyle({ color: COLOR_DOING, opacity: 0.9 }); } 
+            else { layer.setStyle({ color: COLOR_TODO, opacity: OPACITY_TODO }); }
+
+            // Filtre
+            if (currentFilter === 'all' || status === currentFilter) { 
+                if (!map.hasLayer(layer)) streetsGroup.addLayer(layer); 
+            } else { 
+                if (map.hasLayer(layer)) streetsGroup.removeLayer(layer); 
+            }
+        }
+
         async function initMap() {
             try {
+                // Chargement des frontières (Paris.geojson)
                 document.getElementById('loading-msg').innerText = "Lecture paris.geojson...";
                 
                 let geojsonData = null;
@@ -308,7 +399,6 @@
                 }
 
                 // Affichage Frontières (Bleu)
-                document.getElementById('loading-msg').innerText = "Construction de la carte...";
                 communesPolygons = geojsonData;
                 const boundaryLayer = L.geoJSON(communesPolygons, { 
                     style: function(feature) { return { color: "blue", weight: 2, fillColor: "blue", fillOpacity: 0.05, interactive: false }; },
@@ -316,53 +406,8 @@
                 }).addTo(map);
                 map.fitBounds(boundaryLayer.getBounds());
 
-                document.getElementById('loading-msg').innerText = "Téléchargement des rues OSM...";
-                
-                // --- REQUÊTE OPTIMISÉE POUR PARIS (Timeout 90s, Filtre types de routes) ---
-                let query = `[out:json][timeout:90];(`;
-                const bounds = boundaryLayer.getBounds();
-                const bbox = `${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()}`;
-                
-                // On demande uniquement les routes nommées (Residential, Primary, etc.)
-                query += `way["highway"~"^(residential|primary|secondary|tertiary|unclassified|living_street)$"]["name"](${bbox});`;
-                query += `);out geom;`;
-
-                const overpassUrl = OVERPASS_SERVERS[Math.floor(Math.random() * OVERPASS_SERVERS.length)] + "?data=" + encodeURIComponent(query);
-                
-                try {
-                    const osmResponse = await fetch(overpassUrl);
-                    if (!osmResponse.ok) throw new Error("Overpass saturé (" + osmResponse.status + ")");
-                    const osmData = await osmResponse.json();
-                    const streetFeatures = osmtogeojson(osmData);
-                    
-                    L.geoJSON(streetFeatures, {
-                        style: { color: COLOR_TODO, weight: 4, opacity: OPACITY_TODO },
-                        onEachFeature: function(feature, layer) {
-                            const streetName = feature.properties.name;
-                            if (streetName) {
-                                const safeId = sanitizeId(streetName);
-                                layer.streetId = safeId;
-                                layer.streetNameDisplay = streetName;
-                                layer.streetNameNormal = streetName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                                layer.bindTooltip(`<div class="street-tooltip">${streetName}</div>`, { permanent: false, sticky: true, direction: 'center' });
-                                layer.on('click', () => {
-                                    const currentStatus = layer.status || 'todo';
-                                    let nextStatus = 'doing';
-                                    if (currentStatus === 'doing') nextStatus = 'done';
-                                    else if (currentStatus === 'done') nextStatus = 'todo';
-                                    set(ref(db, 'streets/' + safeId), { status: nextStatus, timestamp: Date.now() });
-                                });
-                                streetsGroup.addLayer(layer);
-                                allLayersList.push(layer);
-                                totalStreetsCount++;
-                            }
-                        }
-                    });
-                } catch (errOSM) {
-                    console.error(errOSM);
-                    document.getElementById('server-status').innerText = "Erreur chargement rues : Zone trop grande ou serveur occupé.";
-                }
-
+                // Connexion Firebase
+                document.getElementById('loading-msg').innerText = "Connexion données...";
                 onValue(ref(db, 'streets'), (snapshot) => {
                     latestFirebaseData = snapshot.val() || {};
                     updateMapDisplay();
@@ -373,6 +418,9 @@
                 });
 
                 document.getElementById('loading').classList.add('hidden');
+                
+                // Premier chargement si on est assez zoomé (sinon le message apparait)
+                setTimeout(checkZoomAndLoad, 1000);
 
             } catch (error) {
                 console.error(error);
@@ -380,23 +428,24 @@
             }
         }
 
-        function updateMapDisplay() {
+        function updateStats() {
             let doneCount = 0;
-            allLayersList.forEach(layer => {
-                const status = (latestFirebaseData[layer.streetId] && latestFirebaseData[layer.streetId].status) ? latestFirebaseData[layer.streetId].status : 'todo';
-                layer.status = status;
-                
-                if (status === 'done') { layer.setStyle({ color: COLOR_DONE, opacity: OPACITY_DONE }); doneCount++; } 
-                else if (status === 'doing') { layer.setStyle({ color: COLOR_DOING, opacity: 0.9 }); } 
-                else { layer.setStyle({ color: COLOR_TODO, opacity: OPACITY_TODO }); }
+            allLayersList.forEach(l => { if(l.status === 'done') doneCount++; });
+            const total = allLayersList.length; // Attention, c'est le total CHARGÉ, pas le total de Paris
+            
+            // Pour Paris, les stats totales sont impossibles à connaitre au début
+            // On affiche donc "Rues terminées (sur celles chargées)"
+            if (total > 0) {
+                const percent = Math.round((doneCount / total) * 100);
+                document.getElementById('stats-text').innerText = `${doneCount} rues faites (visibles)`;
+                document.getElementById('stats-percent').innerText = `${percent}%`;
+                document.getElementById('progress-bar').style.width = `${percent}%`;
+            }
+        }
 
-                if (currentFilter === 'all' || status === currentFilter) { if (!map.hasLayer(layer)) streetsGroup.addLayer(layer); } 
-                else { if (map.hasLayer(layer)) streetsGroup.removeLayer(layer); }
-            });
-            const percent = (totalStreetsCount > 0) ? Math.round((doneCount / totalStreetsCount) * 100) : 0;
-            document.getElementById('stats-text').innerText = `${doneCount} / ${totalStreetsCount} rues`;
-            document.getElementById('stats-percent').innerText = `${percent}%`;
-            document.getElementById('progress-bar').style.width = `${percent}%`;
+        function updateMapDisplay() {
+            allLayersList.forEach(layer => updateSingleLayer(layer));
+            updateStats();
         }
 
         function updateNotesDisplay() {
