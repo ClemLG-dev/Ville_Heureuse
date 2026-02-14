@@ -11,18 +11,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
     
     <style>
-        /* --- STABILISATION TOTALE (ANTI-SCROLL) --- */
         body, html { 
             margin: 0; padding: 0; 
             height: 100%; width: 100%; 
-            position: fixed; /* Cloue la page à l'écran */
-            overflow: hidden; /* Interdit tout dépassement */
-            overscroll-behavior: none; /* Empêche l'effet élastique sur iOS */
+            position: fixed; 
+            overflow: hidden; 
+            overscroll-behavior: none; 
             font-family: sans-serif; 
             background-color: #2c3e50; 
         }
         
-        /* HEADER (Fixe en haut) */
         #header { 
             position: absolute; top: 0; left: 0; width: 100%; 
             height: 70px; 
@@ -34,14 +32,12 @@
         .stats-container { width: 300px; text-align: right; margin-left: 15px; }
         .progress { height: 10px; background-color: #4a6278; }
         
-        /* CARTE (Prend tout le reste) */
         #map { 
             position: absolute; top: 70px; bottom: 0; left: 0; right: 0;
             background: #e5e5e5; 
             z-index: 1;
         }
         
-        /* BARRE DE RECHERCHE */
         #search-container { 
             position: absolute; top: 85px; left: 50%; transform: translateX(-50%); 
             width: 300px; z-index: 1500; 
@@ -51,7 +47,6 @@
         .search-result-item { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 13px; }
         .search-result-item:hover { background-color: #f8f9fa; }
 
-        /* LEGENDE */
         .legend-container { position: absolute; bottom: 30px; right: 10px; z-index: 1000; background: white; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.2); overflow: hidden; width: 200px; transition: all 0.3s ease; }
         .legend-header { padding: 10px 15px; background: #f8f9fa; border-bottom: 1px solid #eee; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; align-items: center; user-select: none; }
         .legend-content { padding: 15px; }
@@ -60,25 +55,19 @@
         .legend-item { margin-bottom: 8px; display: flex; align-items: center; }
         .legend-color { width: 20px; height: 20px; border-radius: 4px; margin-right: 10px; display: inline-block; }
         
-        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(44, 62, 80, 0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: white; transition: opacity 0.5s ease; }
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(44, 62, 80, 0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; color: white; transition: opacity 0.5s ease; text-align: center; padding: 20px; }
         .loading-overlay.hidden { opacity: 0; pointer-events: none; }
         
-        /* CONTROLES CARTE */
         .leaflet-left .leaflet-control { margin-bottom: 10px; }
         .leaflet-control-geoloc { background-color: white; width: 34px; height: 34px; border-radius: 4px; border: 2px solid rgba(0,0,0,0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .geoloc-icon { width: 20px; height: 20px; fill: #333; }
-        .source-info { position: absolute; bottom: 5px; left: 5px; font-size: 10px; color: #666; z-index: 1000; background: rgba(255,255,255,0.7); padding: 2px 5px; border-radius: 3px; pointer-events: none; }
         
         .custom-filter select { pointer-events: auto; background: white; border: 2px solid rgba(0,0,0,0.4); border-radius: 4px; padding: 5px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.4); }
-
         .leaflet-control-layers { border: 2px solid rgba(0,0,0,0.4) !important; border-radius: 4px !important; box-shadow: 0 2px 5px rgba(0,0,0,0.4) !important; margin-left: 10px !important; }
-        .leaflet-control-layers-expanded { padding: 8px !important; font-size: 13px !important; font-weight: bold !important; color: #333 !important; background: white !important; }
-
-        /* UTILITAIRES VISUELS */
+        
         path.leaflet-interactive:focus { outline: none; }
         .leaflet-interactive { -webkit-tap-highlight-color: transparent; }
 
-        .panneau-tooltip { font-size: 14px !important; font-family: sans-serif !important; border: 1px solid #666 !important; min-width: 250px !important; max-width: 400px !important; white-space: normal !important; padding: 10px !important; line-height: 1.4 !important; background-color: white !important; color: black !important; box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important; opacity: 1 !important; border-radius: 6px !important; z-index: 9000 !important; }
         .street-tooltip { background: rgba(255, 255, 255, 0.95); border: 1px solid #333; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.4); font-weight: bold; font-size: 12px; padding: 2px 6px; color: #333; }
         
         .note-tooltip { background: #6f42c1; color: white; border: none; border-radius: 4px; padding: 5px 10px; font-weight: bold; }
@@ -90,29 +79,17 @@
 
         #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #2c3e50; z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
 
-        /* ========================================= */
-        /* --- OPTIMISATIONS MOBILE & TABLETTE --- */
-        /* ========================================= */
         @media (max-width: 768px) {
-            /* 1. Header plus compact */
             #header { height: 60px; padding: 0 10px; }
             #header img { height: 35px; }
             #header h1 { font-size: 0.8rem; line-height: 1.1; white-space: normal; }
             .stats-container { width: 110px; margin-left: 8px; }
             #stats-text { font-size: 0.7rem; }
-            
-            /* 2. Ajustement Carte */
             #map { top: 60px; }
-
-            /* 3. Barre de recherche + basse */
             #search-container { width: 90%; top: 70px; }
-            
-            /* 4. UI Simplifiée */
             .leaflet-control-zoom { display: none; }
             .legend-container { width: 160px; bottom: 20px; right: 5px; }
             .legend-content { padding: 10px; font-size: 12px; }
-            
-            /* 5. BOUTONS DESCENDUS (Anti-chevauchement) */
             .leaflet-top { top: 130px; transition: top 0.3s; } 
             .leaflet-control-layers { margin-top: 0 !important; }
         }
@@ -156,20 +133,18 @@
     </div>
 
     <div id="map"></div>
-    <div id="source-display" class="source-info">Source: Chargement...</div>
+    <div id="source-display" class="source-info" style="display:none"></div>
 
     <div class="legend-container" id="legend">
         <div class="legend-header" onclick="toggleLegend()">
             Légende <span id="legend-arrow">▼</span>
         </div>
         <div class="legend-content">
-            <div class="legend-item"><span class="legend-color" style="background: rgba(0,0,255,0.0); border: 2px solid blue;"></span><span>Frontières</span></div>
+            <div class="legend-item"><span class="legend-color" style="background: rgba(0,0,255,0.0); border: 2px solid blue;"></span><span>Arrondissements</span></div>
             <div class="legend-item"><span class="legend-color" style="background: rgba(220, 53, 69, 0.4);"></span><span>Rue à faire</span></div>
             <div class="legend-item"><span class="legend-color" style="background: #fd7e14;"></span><span>En cours / À repasser</span></div>
             <div class="legend-item"><span class="legend-color" style="background: #28a745;"></span><span>Rue faite</span></div>
             <hr style="margin: 8px 0;">
-            <div class="legend-item"><span class="legend-color" style="background: #dc3545; border: 2px solid white; border-radius: 50%;"></span><span>Panneau à faire</span></div>
-            <div class="legend-item"><span class="legend-color" style="background: #28a745; border: 2px solid white; border-radius: 50%;"></span><span>Panneau fait</span></div>
             <div class="legend-item"><span class="legend-color" style="background: #6f42c1; border: 2px solid white; border-radius: 50%;"></span><span>Note (Appui long)</span></div>
         </div>
     </div>
@@ -189,12 +164,8 @@
         import { getDatabase, ref, onValue, set, remove, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         // CONFIGURATION
-        const MOT_DE_PASSE = "paris2024"; // MOT DE PASSE MODIFIÉ
-        const LISTE_PANNEAUX = [
-            // LISTE VIDÉE POUR PARIS
-        ];
-
-        // ATTENTION : Pour une séparation complète des données, créez un nouveau projet Firebase et remplacez ces valeurs.
+        const MOT_DE_PASSE = "paris2024";
+        
         const firebaseConfig = {
             apiKey: "AIzaSyDV11Ne09SvKOkyti5EfjRM8UYmwlpqhGA",
             authDomain: "suivi-actions-loire-authion.firebaseapp.com",
@@ -204,7 +175,7 @@
             messagingSenderId: "693650330058",
             appId: "1:693650330058:web:42f3c6cbbfa0b2366fff33"
         };
-        const OVERPASS_SERVERS = [ "https://overpass-api.de/api/interpreter", "https://lz4.overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.privatenet.de/api/interpreter" ];
+        const OVERPASS_SERVERS = [ "https://overpass-api.de/api/interpreter", "https://lz4.overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter" ];
         const COLOR_TODO = "#dc3545"; const COLOR_DOING = "#fd7e14"; const COLOR_DONE = "#28a745"; const OPACITY_TODO = 0.4; const OPACITY_DONE = 0.8;
 
         window.toggleLegend = function() {
@@ -219,7 +190,7 @@
             const resultsDiv = document.getElementById('search-results');
             resultsDiv.innerHTML = '';
             if (input.length < 3) { resultsDiv.style.display = 'none'; return; }
-            const matches = allLayersList.filter(l => !l.isPanneau && l.streetNameNormal && l.streetNameNormal.includes(input)).slice(0, 5);
+            const matches = allLayersList.filter(l => l.streetNameNormal && l.streetNameNormal.includes(input)).slice(0, 5);
             if (matches.length > 0) {
                 resultsDiv.style.display = 'block';
                 matches.forEach(layer => {
@@ -239,16 +210,15 @@
         };
         if (localStorage.getItem('map_auth') === 'true') document.getElementById('login-screen').style.display = 'none';
 
-        // FIREBASE & GLOBALS
         let db; try { const app = initializeApp(firebaseConfig); db = getDatabase(app); } catch (e) { console.error("Erreur Firebase:", e); }
         
         const planLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { maxZoom: 19, attribution: 'Plan' });
         const satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, attribution: 'Satellite' });
-        // CENTRAGE SUR PARIS (Ligne modifiée)
+        
+        // Centrage Paris initial
         const map = L.map('map', { layers: [planLayer], doubleClickZoom: false }).setView([48.8566, 2.3522], 13);
 
         let streetsGroup = L.layerGroup().addTo(map);
-        let panneauxGroup = L.layerGroup().addTo(map);
         let notesGroup = L.layerGroup().addTo(map);
         let userMarker = null;
 
@@ -259,7 +229,7 @@
                 const div = L.DomUtil.create('div', 'leaflet-control-geoloc leaflet-bar leaflet-control');
                 div.innerHTML = `<svg class="geoloc-icon" viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>`;
                 div.onclick = function(e) { 
-                    e.stopPropagation(); e.preventDefault(); // IMPORTANT : EMPÊCHE LE SCROLL/FOCUS
+                    e.stopPropagation(); e.preventDefault(); 
                     map.locate({ setView: true, maxZoom: 16, timeout: 30000, enableHighAccuracy: false }); 
                 }; 
                 return div;
@@ -271,7 +241,6 @@
             if (userMarker) { map.removeLayer(userMarker); }
             const gpsIcon = L.divIcon({ className: 'user-location-marker', iconSize: [20, 20], iconAnchor: [10, 10] });
             userMarker = L.marker(e.latlng, {icon: gpsIcon}).addTo(map);
-            // PAS DE POPUP "VOUS ETES ICI" = PAS DE DÉCALAGE
         });
 
         const FilterControl = L.Control.extend({
@@ -284,7 +253,7 @@
         map.addControl(new FilterControl({ position: 'topleft' }));
 
         const baseMaps = { "Plan": planLayer, "Satellite": satLayer };
-        const overlays = { "Rues": streetsGroup, "Panneaux": panneauxGroup, "Notes": notesGroup };
+        const overlays = { "Rues": streetsGroup, "Notes": notesGroup };
         L.control.layers(baseMaps, overlays, { position: 'topleft', collapsed: false }).addTo(map);
 
         function handleAddNote(e) {
@@ -308,66 +277,74 @@
         async function initMap() {
             try {
                 document.getElementById('loading-msg').innerText = "Lecture paris.geojson...";
-                // FICHIER GEOJSON MODIFIÉ
-                const response = await fetch('paris.geojson');
-                if (!response.ok) throw new Error("Fichier paris.geojson introuvable.");
-                const textData = await response.text();
-                communesPolygons = (textData.trim().startsWith('<')) ? osmtogeojson(new DOMParser().parseFromString(textData, "text/xml")) : JSON.parse(textData);
                 
+                let geojsonData = null;
+                try {
+                    const response = await fetch('paris.geojson');
+                    if (response.ok) {
+                        const textData = await response.text();
+                        geojsonData = (textData.trim().startsWith('<')) ? osmtogeojson(new DOMParser().parseFromString(textData, "text/xml")) : JSON.parse(textData);
+                    } else { throw new Error("Non trouvé"); }
+                } catch (fetchError) {
+                    document.getElementById('loading-msg').innerHTML = `
+                        <div class="mb-3 text-warning">Impossible de charger paris.geojson automatiquement.</div>
+                        <label class="btn btn-primary fw-bold shadow">📂 Ouvrir "paris.geojson" <input type="file" id="manual-file-input" accept=".geojson,.json,.xml" style="display: none;"></label>
+                    `;
+                    geojsonData = await new Promise((resolve, reject) => {
+                        const input = document.getElementById('manual-file-input');
+                        input.onchange = e => {
+                            const file = e.target.files[0];
+                            if (!file) return;
+                            const reader = new FileReader();
+                            reader.onload = event => {
+                                const text = event.target.result;
+                                resolve((text.trim().startsWith('<')) ? osmtogeojson(new DOMParser().parseFromString(text, "text/xml")) : JSON.parse(text));
+                            };
+                            reader.readAsText(file);
+                        };
+                    });
+                }
+
+                // Affichage Frontières (Bleu)
+                document.getElementById('loading-msg').innerText = "Construction de la carte...";
+                communesPolygons = geojsonData;
                 const boundaryLayer = L.geoJSON(communesPolygons, { 
-                    style: function(feature) { return { color: "blue", weight: 2, fillColor: "blue", fillOpacity: 0, interactive: false }; },
+                    style: function(feature) { return { color: "blue", weight: 2, fillColor: "blue", fillOpacity: 0.05, interactive: false }; },
                     filter: function(feature) { return feature.geometry.type !== "Point"; }
                 }).addTo(map);
                 map.fitBounds(boundaryLayer.getBounds());
 
-                // --- PANNEAUX ---
-                LISTE_PANNEAUX.forEach(panneau => {
-                    const panneauId = "panneau_" + panneau.lat.toString().replace('.','_') + "_" + panneau.lng.toString().replace('.','_');
-                    const marker = L.circleMarker([panneau.lat, panneau.lng], { radius: 12, weight: 2, opacity: 1, fillOpacity: 1, color: "white", fillColor: COLOR_TODO });
-                    marker.streetId = panneauId; marker.isPanneau = true; 
-                    const infoText = `<div style="text-align:left;"><strong style="font-size:16px; display:block; margin-bottom:5px; color:#2c3e50;">${panneau.colA}</strong><span style="display:block; margin-bottom:8px; font-size:14px;">${panneau.colB}</span><em style="font-size:13px; color:#666;">${panneau.colC}</em></div>`;
-                    marker.bindTooltip(infoText, { className: 'panneau-tooltip', permanent: false, direction: 'top', offset: [0, -10] });
-                    marker.on('click', () => {
-                        const newStatus = (marker.status === 'done') ? 'todo' : 'done';
-                        set(ref(db, 'streets/' + panneauId), { status: newStatus, timestamp: Date.now() });
-                    });
-                    panneauxGroup.addLayer(marker);
-                    allLayersList.push(marker);
-                });
-
-                document.getElementById('loading-msg').innerText = "Chargement des rues OSM...";
-                let query = `[out:json][timeout:25];(`;
-                // ON UTILISE LE POLYGONE DU GEOJSON POUR FILTRER LA REQUÊTE OSM
+                document.getElementById('loading-msg').innerText = "Téléchargement des rues OSM...";
+                
+                // --- REQUÊTE OPTIMISÉE POUR PARIS ---
+                // 1. Timeout augmenté à 90s
+                // 2. Filtre strict sur les types de routes (exclut trottoirs, pistes cyclables isolées, etc.)
+                let query = `[out:json][timeout:90];(`;
                 const bounds = boundaryLayer.getBounds();
                 const bbox = `${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()}`;
                 
-                // Récupération des rues nommées dans la zone
-                query += `way["highway"]["name"](${bbox});`;
+                // On demande uniquement les routes nommées (Residential, Primary, etc.)
+                query += `way["highway"~"^(residential|primary|secondary|tertiary|unclassified|living_street)$"]["name"](${bbox});`;
                 query += `);out geom;`;
 
                 const overpassUrl = OVERPASS_SERVERS[Math.floor(Math.random() * OVERPASS_SERVERS.length)] + "?data=" + encodeURIComponent(query);
                 
                 try {
                     const osmResponse = await fetch(overpassUrl);
-                    if (!osmResponse.ok) throw new Error("Erreur Overpass API");
+                    if (!osmResponse.ok) throw new Error("Overpass saturé (" + osmResponse.status + ")");
                     const osmData = await osmResponse.json();
-                    
                     const streetFeatures = osmtogeojson(osmData);
                     
                     L.geoJSON(streetFeatures, {
                         style: { color: COLOR_TODO, weight: 4, opacity: OPACITY_TODO },
                         onEachFeature: function(feature, layer) {
-                            // On vérifie si la rue est dans le GeoJSON (approximatif via bounds pour l'instant, ou intersection précise via Turf si besoin)
-                            // Pour simplifier et éviter la lourdeur de Turf.booleanPointInPolygon sur des milliers de points, on garde tout ce qui est dans la bbox renvoyée par Overpass
-                            // Si vous voulez être très précis, on peut ajouter le filtre Turf ici.
-                            
                             const streetName = feature.properties.name;
                             if (streetName) {
                                 const safeId = sanitizeId(streetName);
                                 layer.streetId = safeId;
                                 layer.streetNameDisplay = streetName;
                                 layer.streetNameNormal = streetName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                                layer.bindTooltip(`<div class="street-tooltip">${streetName}</div>`, { permanent: false, sticky: true, direction: 'center', className: 'street-tooltip-container' });
+                                layer.bindTooltip(`<div class="street-tooltip">${streetName}</div>`, { permanent: false, sticky: true, direction: 'center' });
                                 layer.on('click', () => {
                                     const currentStatus = layer.status || 'todo';
                                     let nextStatus = 'doing';
@@ -383,15 +360,13 @@
                     });
                 } catch (errOSM) {
                     console.error(errOSM);
-                    document.getElementById('server-status').innerText = "Mode dégradé : impossible de charger les rues OSM.";
+                    document.getElementById('server-status').innerText = "Erreur chargement rues : Zone trop grande ou serveur occupé.";
                 }
 
-                // ECOUTEURS FIREBASE
                 onValue(ref(db, 'streets'), (snapshot) => {
                     latestFirebaseData = snapshot.val() || {};
                     updateMapDisplay();
                 });
-                
                 onValue(ref(db, 'notes'), (snapshot) => {
                     latestNotesData = snapshot.val() || {};
                     updateNotesDisplay();
@@ -407,53 +382,19 @@
 
         function updateMapDisplay() {
             let doneCount = 0;
-            
             allLayersList.forEach(layer => {
-                if (layer.isPanneau) {
-                    // Logique Panneaux
-                    const status = (latestFirebaseData[layer.streetId] && latestFirebaseData[layer.streetId].status) ? latestFirebaseData[layer.streetId].status : 'todo';
-                    layer.status = status;
-                    if (status === 'done') {
-                        layer.setStyle({ fillColor: COLOR_DONE, color: "white" });
-                    } else {
-                        layer.setStyle({ fillColor: COLOR_TODO, color: "white" });
-                    }
-                    
-                    // Filtre Panneaux
-                    if (currentFilter === 'all') {
-                        if (!map.hasLayer(layer)) panneauxGroup.addLayer(layer);
-                    } else {
-                        if (status === currentFilter) { if (!map.hasLayer(layer)) panneauxGroup.addLayer(layer); }
-                        else { if (map.hasLayer(layer)) panneauxGroup.removeLayer(layer); }
-                    }
+                const status = (latestFirebaseData[layer.streetId] && latestFirebaseData[layer.streetId].status) ? latestFirebaseData[layer.streetId].status : 'todo';
+                layer.status = status;
+                
+                if (status === 'done') { layer.setStyle({ color: COLOR_DONE, opacity: OPACITY_DONE }); doneCount++; } 
+                else if (status === 'doing') { layer.setStyle({ color: COLOR_DOING, opacity: 0.9 }); } 
+                else { layer.setStyle({ color: COLOR_TODO, opacity: OPACITY_TODO }); }
 
-                } else {
-                    // Logique Rues
-                    const status = (latestFirebaseData[layer.streetId] && latestFirebaseData[layer.streetId].status) ? latestFirebaseData[layer.streetId].status : 'todo';
-                    layer.status = status;
-                    
-                    if (status === 'done') {
-                        layer.setStyle({ color: COLOR_DONE, opacity: OPACITY_DONE });
-                        doneCount++;
-                    } else if (status === 'doing') {
-                        layer.setStyle({ color: COLOR_DOING, opacity: 0.9 });
-                    } else {
-                        layer.setStyle({ color: COLOR_TODO, opacity: OPACITY_TODO });
-                    }
-
-                    // Filtre Rues
-                    if (currentFilter === 'all') {
-                        if (!map.hasLayer(layer)) streetsGroup.addLayer(layer);
-                    } else {
-                        if (status === currentFilter) { if (!map.hasLayer(layer)) streetsGroup.addLayer(layer); }
-                        else { if (map.hasLayer(layer)) streetsGroup.removeLayer(layer); }
-                    }
-                }
+                if (currentFilter === 'all' || status === currentFilter) { if (!map.hasLayer(layer)) streetsGroup.addLayer(layer); } 
+                else { if (map.hasLayer(layer)) streetsGroup.removeLayer(layer); }
             });
-
-            // Mise à jour stats
             const percent = (totalStreetsCount > 0) ? Math.round((doneCount / totalStreetsCount) * 100) : 0;
-            document.getElementById('stats-text').innerText = `${doneCount} / ${totalStreetsCount} rues faites`;
+            document.getElementById('stats-text').innerText = `${doneCount} / ${totalStreetsCount} rues`;
             document.getElementById('stats-percent').innerText = `${percent}%`;
             document.getElementById('progress-bar').style.width = `${percent}%`;
         }
@@ -466,12 +407,10 @@
                 const dateStr = new Date(note.timestamp).toLocaleDateString();
                 const popupContent = `<div style="min-width:150px"><strong>Note du ${dateStr}</strong><br><p class="mt-2 mb-2">${note.text}</p><button class="btn-delete-note" onclick="deleteNote('${key}')">Supprimer</button></div>`;
                 noteMarker.bindPopup(popupContent, { className: 'note-popup' });
-                noteMarker.bindTooltip("Note", { className: 'note-tooltip', permanent: false, direction: 'top', offset: [0, -10] });
                 notesGroup.addLayer(noteMarker);
             });
         }
 
-        // Démarrage
         initMap();
 
     </script>
